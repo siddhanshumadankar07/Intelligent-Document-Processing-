@@ -1,0 +1,29 @@
+APEX GLOBAL CLOUD SOLUTIONS INC.
+100 Tech Enterprise Blvd, Suite 400
+San Francisco, CA 94107
+Tax ID: US-882910492
+
+INVOICE
+Invoice Number: INV-84920
+Invoice Date: March 15, 2026
+Due Date: April 14, 2026
+Payment Terms: Net 30 Days
+
+BILL TO:
+Acme Corporation
+Attn: Accounts Payable
+450 Innovation Way, Austin, TX 78701
+
+LINE ITEMS:
+1. Dedicated GPU Cluster Instances (vLLM-H100) - 720 Hours @ $3.50/hr = $2,520.00
+2. Enterprise Object Storage S3 Compatible (50 TB) = $480.00
+3. Premium Multi-Region Load Balancer Support = $250.00
+4. Automated SSL & WAF Security Suite = $200.00
+
+Subtotal: $3,450.00
+Tax (State Sales Tax 8.25%): $284.63
+Total Amount Due: $3,734.63
+Currency: USD
+
+Remit Wire Payments To:
+Silicon Tech Bank | Routing: 121000358 | Account: 9948271049

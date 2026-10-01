@@ -1,0 +1,15 @@
+MASTER SERVICES & NONDISCLOSURE AGREEMENT
+
+This Master Services Agreement ("Agreement") is made and entered into as of January 15, 2026 ("Effective Date"), by and between:
+FIRST PARTY: Nexus Enterprises Ltd., a Delaware corporation having its principal place of business at 700 Market St, Wilmington, DE ("Discloser/Provider"); and
+SECOND PARTY: Stratton Media Group LLC, a New York limited liability company having its office at 5th Ave, New York, NY ("Recipient/Client").
+
+1. SCOPE OF SERVICES: Provider will perform AI-driven digital transformation consulting as outlined in attached Statements of Work (SOW).
+2. TERM AND TERMINATION: This Agreement shall remain in effect for a period of twelve (12) months through January 14, 2027. Either party may terminate upon thirty (30) days written notice.
+3. CONFIDENTIALITY: Each party agrees to hold all proprietary trade secrets, algorithms, and financial data in strict confidence for a period of five (5) years.
+4. LIMITATION OF LIABILITY: IN NO EVENT SHALL EITHER PARTY'S AGGREGATE LIABILITY EXCEED THE TOTAL FEES PAID OR PAYABLE UNDER THE APPLICABLE SOW IN THE PRECEDING TWELVE (12) MONTHS.
+5. GOVERNING LAW & JURISDICTION: This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, USA, without regard to conflicts of law provisions.
+
+IN WITNESS WHEREOF, the authorized representatives have executed this Agreement:
+For Nexus Enterprises: Eleanor Vance, VP Operations
+For Stratton Media: David Sterling, Managing Director

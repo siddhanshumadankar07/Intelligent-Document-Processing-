@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "Clause IDP API Collection",
+    "description": "API endpoints for Clause - Zero-Retention Intelligent Document Processing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Eleanor Vance\",\n  \"email\": \"eleanor@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"profession\": \"Finance/Accounting\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"eleanor@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Request WhatsApp OTP",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/whatsapp/request-otp",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phoneOrEmail\": \"+14155552671\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Session - Status & Countdown",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/sessions/status",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ]
+      }
+    },
+    {
+      "name": "Session - Extend TTL",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/sessions/extend",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"minutes\": 15\n}"
+        }
+      }
+    },
+    {
+      "name": "Documents - List Session Documents",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/documents",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ]
+      }
+    },
+    {
+      "name": "Documents - Upload & Extract (Memory Only)",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/documents/upload",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ]
+      }
+    },
+    {
+      "name": "Chat - Send Message to Jarvis",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/chat/message",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What is the total sum across all uploaded invoices?\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Export - Session Audit PDF & Wipe",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/export?wipe=true",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ]
+      }
+    }
+  ]
+}

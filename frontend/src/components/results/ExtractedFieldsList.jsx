@@ -1,0 +1,260 @@
+import React, { useState } from 'react';
+import {
+  Sparkles,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  RefreshCw,
+  Bot,
+  Save,
+  Check,
+  Edit2,
+  Info,
+} from 'lucide-react';
+import { Card } from '../common/Card';
+import { Badge } from '../common/Badge';
+import { ConfidenceRing } from '../common/ConfidenceRing';
+import { StatusPill } from '../common/StatusPill';
+import { Button } from '../common/Button';
+import { Tooltip } from '../common/Tooltip';
+import { useJarvis } from '../../context/JarvisContext';
+
+export const ExtractedFieldsList = ({
+  document,
+  onUpdateFields,
+  onUpdateStatus,
+  onReprocess,
+  isReprocessing = false,
+}) => {
+  const { sendMessage, setIsOpen } = useJarvis();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [summaryText, setSummaryText] = useState('');
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Sync state when document changes
+  React.useEffect(() => {
+    if (document) {
+      setFormData(document.extractedData || {});
+      setSummaryText(document.summary || '');
+      setIsEditing(false);
+    }
+  }, [document]);
+
+  if (!document) {
+    return (
+      <Card className="h-full flex items-center justify-center p-8 text-center">
+        <p className="text-xs text-text-mutedLight dark:text-text-mutedDark">
+          Select a document from the session to view extracted fields
+        </p>
+      </Card>
+    );
+  }
+
+  const handleFieldChange = (key, val) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: val,
+    }));
+  };
+
+  const handleSave = async () => {
+    await onUpdateFields(document.id || document._id, {
+      extractedData: formData,
+      summary: summaryText,
+    });
+    setIsEditing(false);
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 2000);
+  };
+
+  const handleAskJarvis = () => {
+    setIsOpen(true);
+    sendMessage(`Analyze the extracted fields and validation flags for document "${document.fileName}".`);
+  };
+
+  const fieldConfidences = document.fieldConfidences || {};
+  const entries = Object.entries(formData);
+
+  return (
+    <Card padding="none" className="h-full flex flex-col overflow-hidden">
+      {/* Header Info Banner */}
+      <div className="p-4 sm:p-5 border-b border-border-light dark:border-border-dark bg-slate-50/50 dark:bg-slate-900/30">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold uppercase tracking-wider">
+              {document.type ? document.type.replace(/_/g, ' ') : 'Document'}
+            </span>
+            <span className="text-xs px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-text-mutedLight dark:text-text-mutedDark font-medium">
+              {document.category || 'General'}
+            </span>
+          </div>
+
+          {/* Status Dropdown */}
+          <div className="flex items-center gap-2">
+            <select
+              value={document.status || 'Needs Review'}
+              onChange={(e) => onUpdateStatus(document.id || document._id, e.target.value)}
+              className="text-xs font-semibold rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-3 py-1.5 focus:ring-2 focus:ring-teal-500 focus:outline-none cursor-pointer"
+            >
+              <option value="Approved">Approved</option>
+              <option value="Needs Review">Needs Review</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Confidence Ring & Summary Card */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 rounded-2xl bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm">
+          <ConfidenceRing value={document.confidence || 90} size={54} />
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-text-light dark:text-text-dark mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-jarvis" />
+              <span>AI Executive Summary</span>
+            </div>
+            {isEditing ? (
+              <textarea
+                value={summaryText}
+                onChange={(e) => setSummaryText(e.target.value)}
+                className="w-full text-xs p-2 rounded-lg border border-border-light dark:border-border-dark bg-slate-50 dark:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                rows={2}
+              />
+            ) : (
+              <p className="text-xs text-text-mutedLight dark:text-text-mutedDark leading-relaxed line-clamp-2">
+                {document.summary || 'Summary generated by Claude AI engine.'}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Inline Risk Flags Alert */}
+        {document.flags && document.flags.length > 0 && (
+          <div className="mt-3 space-y-1.5">
+            {document.flags.map((flag, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-800 dark:text-amber-300 text-xs"
+              >
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold">{flag.message}: </span>
+                  <span>{flag.explanation}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Extracted Fields Table List */}
+      <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-bold text-text-mutedLight dark:text-text-mutedDark uppercase tracking-wider">
+            Structured Fields ({entries.length})
+          </h4>
+          <div className="flex items-center gap-2">
+            {isEditing ? (
+              <Button variant="primary" size="sm" icon={Save} onClick={handleSave}>
+                Save Changes
+              </Button>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-1 text-xs text-primary font-semibold hover:underline"
+              >
+                <Edit2 className="w-3 h-3" />
+                Edit Fields
+              </button>
+            )}
+          </div>
+        </div>
+
+        {entries.length === 0 ? (
+          <div className="text-center py-8 text-xs text-text-mutedLight dark:text-text-mutedDark">
+            No fields extracted for this document.
+          </div>
+        ) : (
+          <div className="space-y-2.5">
+            {entries.map(([key, value]) => {
+              const fieldConf = fieldConfidences[key] || 90;
+              const isLow = fieldConf < 70;
+              const isMed = fieldConf >= 70 && fieldConf < 85;
+
+              return (
+                <div
+                  key={key}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-border-light dark:border-border-dark hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                >
+                  <div className="flex items-center gap-2 min-w-[140px]">
+                    <span
+                      className={`w-2 h-2 rounded-full shrink-0 ${
+                        isLow ? 'bg-rose-500' : isMed ? 'bg-amber-500' : 'bg-emerald-500'
+                      }`}
+                      title={`${fieldConf}% confidence`}
+                    />
+                    <span className="text-xs font-semibold text-text-light dark:text-text-dark capitalize">
+                      {key.replace(/_/g, ' ')}:
+                    </span>
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={typeof value === 'object' ? JSON.stringify(value) : value}
+                        onChange={(e) => handleFieldChange(key, e.target.value)}
+                        className="w-full text-xs font-mono p-1.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                      />
+                    ) : (
+                      <span className="text-xs font-mono text-slate-800 dark:text-slate-200 block truncate">
+                        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="text-[10px] font-mono text-text-mutedLight dark:text-text-mutedDark sm:text-right shrink-0">
+                    {fieldConf}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Action Footer Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 p-4 border-t border-border-light dark:border-border-dark bg-slate-50 dark:bg-slate-900/50">
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={RefreshCw}
+          loading={isReprocessing}
+          onClick={() => onReprocess(document.id || document._id)}
+        >
+          Re-run Extraction
+        </Button>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="jarvis"
+            size="sm"
+            icon={Bot}
+            onClick={handleAskJarvis}
+          >
+            Ask Jarvis
+          </Button>
+
+          <Button
+            variant="primary"
+            size="sm"
+            icon={CheckCircle2}
+            onClick={() => onUpdateStatus(document.id || document._id, 'Approved')}
+          >
+            Approve Document
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
+};
