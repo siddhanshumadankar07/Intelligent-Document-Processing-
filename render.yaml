@@ -1,0 +1,40 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: clause-idp-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        value: https://clause-idp-frontend.onrender.com
+      # Add MONGODB_URI if using MongoDB Atlas, or leave blank to use fast in-memory store
+      - key: MONGODB_URI
+        sync: false
+
+  # Frontend Static Site
+  - type: web
+    name: clause-idp-frontend
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://clause-idp-backend.onrender.com/api
